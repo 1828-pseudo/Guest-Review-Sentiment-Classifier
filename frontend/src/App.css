@@ -2,11 +2,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 body {
-  background: #f4f6f9;
+  background-color: #f4f6f9;
 }
 
 .container {
@@ -18,28 +18,34 @@ body {
 h1 {
   text-align: center;
   margin-bottom: 30px;
+  color: #1e293b;
 }
 
 .card {
   background: white;
   padding: 25px;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 label {
   display: block;
   margin-top: 15px;
   margin-bottom: 8px;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 select,
 textarea {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
+  font-size: 15px;
+}
+
+textarea {
+  resize: vertical;
 }
 
 .button-group {
@@ -49,33 +55,46 @@ textarea {
 }
 
 button {
-  padding: 12px 20px;
+  padding: 12px 18px;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
-  background: #2563eb;
+  background-color: #2563eb;
   color: white;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+button:hover {
+  opacity: 0.9;
 }
 
 .analyze-btn {
-  background: #16a34a;
+  background-color: #16a34a;
 }
 
 .message {
   margin-top: 20px;
-  background: #fff8dc;
   padding: 12px;
-  border-radius: 8px;
+  background-color: #fff7d6;
+  border-left: 5px solid #f59e0b;
+  border-radius: 6px;
 }
 
 .reviews-section {
   margin-top: 30px;
 }
 
+.reviews-section h2 {
+  margin-bottom: 15px;
+  color: #334155;
+}
+
 .review-card {
   background: white;
   padding: 15px;
-  margin-top: 10px;
+  margin-bottom: 12px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  line-height: 1.5;
 }

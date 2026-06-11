@@ -21,7 +21,10 @@ function App() {
   });
 
   const addReview = () => {
-    if (!review.trim()) return;
+    if (!review.trim()) {
+      alert("Please enter a review.");
+      return;
+    }
 
     setReviews({
       ...reviews,
@@ -49,7 +52,9 @@ function App() {
           onChange={(e) => setSelectedHomestay(e.target.value)}
         >
           {homestays.map((home) => (
-            <option key={home}>{home}</option>
+            <option key={home} value={home}>
+              {home}
+            </option>
           ))}
         </select>
 
@@ -57,7 +62,7 @@ function App() {
 
         <textarea
           rows="5"
-          placeholder="Enter your review here..."
+          placeholder="Share your experience..."
           value={review}
           onChange={(e) => setReview(e.target.value)}
         />
@@ -84,7 +89,7 @@ function App() {
         <h2>{selectedHomestay} Reviews</h2>
 
         {reviews[selectedHomestay].length === 0 ? (
-          <p>No reviews available.</p>
+          <p>No reviews submitted yet.</p>
         ) : (
           reviews[selectedHomestay].map((item, index) => (
             <div className="review-card" key={index}>
