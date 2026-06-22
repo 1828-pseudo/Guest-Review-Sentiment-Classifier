@@ -2,13 +2,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-body {
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: white;
-}
-
-.dark body {
-  background-color: #111827;
+  overflow-x: hidden;
 }

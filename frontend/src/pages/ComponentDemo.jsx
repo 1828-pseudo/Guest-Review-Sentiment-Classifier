@@ -14,14 +14,15 @@ function ComponentDemo() {
   const [name, setName] = useState("");
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white p-8 space-y-8">
+
       <Toast />
 
       <h1 className="text-3xl font-bold">
         UI Component Showcase
       </h1>
 
-      <div className="space-x-4">
+      <div className="flex flex-wrap gap-4">
         <Button variant="primary">Primary</Button>
         <Button variant="secondary">Secondary</Button>
         <Button variant="outline">Outline</Button>
