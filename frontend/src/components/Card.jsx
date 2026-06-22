@@ -1,6 +1,6 @@
 function Card({ title, description, image }) {
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
       <img
         src={image}
         alt={title}
@@ -8,11 +8,11 @@ function Card({ title, description, image }) {
       />
 
       <div className="p-6">
-        <h3 className="text-xl font-bold mb-3">
+        <h3 className="text-xl font-bold mb-3 text-black dark:text-white">
           {title}
         </h3>
 
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-300">
           {description}
         </p>
 
