@@ -1,32 +1,52 @@
 # Guest Review Sentiment Classifier
 
-A machine learning–powered web application designed to analyze guest reviews and classify sentiment as **Positive**, **Negative**, or **Neutral**. The project aims to help homestay owners and hospitality businesses understand customer feedback and improve guest experiences through data-driven insights.
+A full-stack machine learning–powered web application that analyzes guest reviews and classifies sentiment as **Positive**, **Negative**, or **Neutral**. The project helps hospitality businesses gain actionable insights from customer feedback through an intuitive web interface and a RESTful backend API.
 
-## Current Progress
+---
+
+## 🚀 Current Progress
 
 ### Frontend
 
 * Built using **React + Vite**
 * Styled with **Tailwind CSS**
-* Client-side routing implemented using **React Router DOM**
-* Responsive layouts for mobile, tablet, and desktop devices
-* Dark/Light mode support with theme persistence using `localStorage`
+* Client-side routing using **React Router DOM**
+* Responsive layouts for mobile, tablet, and desktop
+* Dark/Light mode with theme persistence using **localStorage**
+* Reusable UI component library
 
-### Implemented Components
+### Backend
 
-* Navbar
-* Hero Section
-* Reusable Card Component
-* Footer
-* UI Component Library:
+* Built with **FastAPI**
+* RESTful API with CRUD operations
+* Search endpoint for reviews
+* CORS configured for frontend integration
+* In-memory data storage (database integration planned)
+* Interactive API documentation via Swagger UI
 
-  * Button
-  * Input
-  * Modal
-  * Toast Notifications
-  * Loader
+---
 
-### Pages
+## ✨ Features
+
+### Frontend
+
+* Responsive user interface
+* Route-based navigation
+* Dark/Light theme switching
+* Reusable component architecture
+* UI Component Showcase page
+
+### Backend
+
+* REST API for guest reviews
+* Create, Read, Update and Delete (CRUD) operations
+* Search reviews by keyword
+* JSON responses with proper HTTP status codes
+* Error handling using FastAPI exceptions
+
+---
+
+## 📄 Pages
 
 * Home
 * About
@@ -34,9 +54,21 @@ A machine learning–powered web application designed to analyze guest reviews a
 * Login
 * UI Component Showcase
 
-## Tech Stack
+---
 
-**Frontend**
+## 🧩 UI Component Library
+
+* Button
+* Input
+* Modal
+* Toast
+* Loader
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
 
 * React
 * Vite
@@ -44,64 +76,147 @@ A machine learning–powered web application designed to analyze guest reviews a
 * React Router DOM
 * React Hot Toast
 
-**Planned Backend & ML**
+### Backend
 
+* FastAPI
 * Python
-* Flask
+* Uvicorn
+* Python Dotenv
+
+### Planned ML Integration
+
 * Scikit-learn
 * Pandas
 * NumPy
 
-## Project Structure
+---
+
+## 📂 Project Structure
 
 ```text
-frontend/
-├── src/
-│   ├── components/
-│   │   ├── Navbar.jsx
-│   │   ├── Hero.jsx
-│   │   ├── Card.jsx
-│   │   ├── Footer.jsx
-│   │   └── ui/
-│   ├── pages/
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
+Guest-Review-Sentiment-Classifier/
 │
-├── package.json
-└── vite.config.js
+├── frontend/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   │   ├── ui/
+│   │   ├── pages/
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── package.json
+│   └── vite.config.js
+│
+├── backend/
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── .env.example
+│   └── .gitignore
+│
+└── README.md
 ```
 
-## Features Implemented
+---
 
-* Responsive user interface
-* Reusable component architecture
-* Route-based navigation
-* Theme switching (Dark/Light Mode)
-* Component showcase page
-* Clean project structure for scalability
+## 🔗 REST API Endpoints
 
-## Upcoming Development
+| Method | Endpoint                        | Description      |
+| ------ | ------------------------------- | ---------------- |
+| GET    | `/`                             | API status       |
+| GET    | `/api/reviews`                  | Get all reviews  |
+| GET    | `/api/reviews/{id}`             | Get review by ID |
+| POST   | `/api/reviews`                  | Create review    |
+| PUT    | `/api/reviews/{id}`             | Update review    |
+| DELETE | `/api/reviews/{id}`             | Delete review    |
+| GET    | `/api/reviews/search/{keyword}` | Search reviews   |
 
-* Guest review submission system
-* Sentiment classification model integration
-* Dashboard analytics and visualizations
-* Review history management
-* Authentication and user management
-* Backend API integration
-* Deployment and production optimization
+---
 
-## Installation
+## ⚙️ How to Run Frontend Locally
 
 ```bash
-git clone <repository-url>
 cd frontend
 npm install
 npm run dev
 ```
 
-## Status
+Frontend runs at:
+
+```
+http://localhost:5173
+```
+
+---
+
+## ⚙️ How to Run Backend Locally
+
+### Navigate to backend
+
+```bash
+cd backend
+```
+
+### Create virtual environment
+
+```bash
+python -m venv venv
+```
+
+### Activate virtual environment
+
+Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Create `.env`
+
+```env
+PORT=5000
+```
+
+### Run the backend
+
+```bash
+uvicorn main:app --reload --port 5000
+```
+
+Backend:
+
+```
+http://127.0.0.1:5000
+```
+
+Swagger Documentation:
+
+```
+http://127.0.0.1:5000/docs
+```
+
+---
+
+## 🚧 Upcoming Development
+
+* Machine Learning sentiment prediction
+* Frontend-backend API integration
+* Guest review submission workflow
+* Dashboard analytics and visualizations
+* Database integration
+* User authentication
+* Deployment to cloud platforms
+
+---
+
+## 📌 Project Status
 
 🚧 **Project Under Active Development**
 
-This project is being continuously developed as part of an internship program. New features, backend integration, and machine learning functionality will be added in upcoming development phases.
+This project is currently being developed as part of a software development internship. The frontend foundation and RESTful backend API have been completed, while machine learning integration, database connectivity, and advanced analytics are actively being implemented.
