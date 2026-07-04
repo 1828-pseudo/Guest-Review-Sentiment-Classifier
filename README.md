@@ -217,6 +217,7 @@ This project uses PostgreSQL hosted on Supabase.
 ## Database Schema
 
 ![schema image](image.png)
+![DATABASE SCHEMA](database.png)
 
 ---
 
