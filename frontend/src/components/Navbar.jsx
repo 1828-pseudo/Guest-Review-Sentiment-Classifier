@@ -29,8 +29,8 @@ function Navbar() {
     <nav className="bg-blue-600 dark:bg-gray-900 text-white p-4">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 
-        <h2 className="font-bold text-xl text-center md:text-left">
-          Guest Review AI
+        <h2 className="font-extrabold text-2xl md:text-3xl text-center md:text-left">
+            Aivora AI
         </h2>
 
         <div className="flex flex-wrap justify-center gap-4">

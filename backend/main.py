@@ -1,8 +1,26 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-app = FastAPI(title="Guest Review Sentiment Classifier API")
+from sqlalchemy import or_
+from sqlalchemy.orm import Session
+
+from database import engine, SessionLocal
+from models.review import Review
+from database import Base
+
+app = FastAPI(
+    title="Aivora AI API"
+)
+Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
 
 # CORS Configuration
 app.add_middleware(
@@ -14,7 +32,7 @@ app.add_middleware(
 )
 
 # Review Model
-class Review(BaseModel):
+class ReviewCreate(BaseModel):
     name: str
     review: str
     sentiment: str
@@ -40,12 +58,17 @@ reviews = [
 # Root Route
 @app.get("/")
 def home():
-    return {"message": "Guest Review Sentiment Classifier API Running"}
+    return {
+    "message": "Welcome to Aivora AI API"
+}
 
 
 # GET all reviews
 @app.get("/api/reviews", status_code=200)
-def get_reviews():
+def get_reviews(db: Session = Depends(get_db)):
+
+    reviews = db.query(Review).all()
+
     return reviews
 
 
@@ -63,24 +86,33 @@ def get_review(review_id: int):
 
 
 # POST create review
+from fastapi import Depends
+
 @app.post("/api/reviews", status_code=201)
-def create_review(review: Review):
+def create_review(
+    review: ReviewCreate,
+    db: Session = Depends(get_db)
+):
 
-    new_review = {
-        "id": len(reviews) + 1,
-        "name": review.name,
-        "review": review.review,
-        "sentiment": review.sentiment,
-    }
+    new_review = Review(
+        name=review.name,
+        review=review.review,
+        sentiment=review.sentiment
+    )
 
-    reviews.append(new_review)
+    db.add(new_review)
+    db.commit()
+    db.refresh(new_review)
 
     return new_review
 
 
 # PUT update review
 @app.put("/api/reviews/{review_id}", status_code=200)
-def update_review(review_id: int, updated_review: Review):
+def update_review(
+    review_id: int,
+    updated_review: ReviewCreate
+):
 
     for review in reviews:
 

@@ -201,6 +201,38 @@ Swagger Documentation:
 http://127.0.0.1:5000/docs
 ```
 
+## Database
+
+This project uses PostgreSQL hosted on Supabase.
+
+### Why PostgreSQL?
+
+- Structured relational database
+- Reliable and scalable
+- Supports SQLAlchemy ORM
+- Easy cloud hosting using Supabase
+
+---
+
+## Database Schema
+
+![schema image](image.png)
+
+---
+
+## Setup Database
+
+1. Create a Supabase project.
+2. Copy the Session Pooler connection string.
+3. Add DATABASE_URL inside the .env file.
+4. Install dependencies
+
+pip install -r requirements.txt
+
+5. Run
+
+uvicorn main:app --reload
+
 ---
 
 ## 🚧 Upcoming Development
