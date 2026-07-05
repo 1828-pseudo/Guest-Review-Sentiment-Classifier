@@ -111,39 +111,52 @@ def create_review(
 @app.put("/api/reviews/{review_id}", status_code=200)
 def update_review(
     review_id: int,
-    updated_review: ReviewCreate
+    updated_review: ReviewCreate,
+    db: Session = Depends(get_db)
 ):
 
-    for review in reviews:
+    review = db.query(Review).filter(
+        Review.id == review_id
+    ).first()
 
-        if review["id"] == review_id:
+    if not review:
+        raise HTTPException(
+            status_code=404,
+            detail="Review not found"
+        )
 
-            review["name"] = updated_review.name
-            review["review"] = updated_review.review
-            review["sentiment"] = updated_review.sentiment
+    review.name = updated_review.name
+    review.review = updated_review.review
+    review.sentiment = updated_review.sentiment
+    review.edited = True
 
-            return review
+    db.commit()
+    db.refresh(review)
 
-    raise HTTPException(
-        status_code=404,
-        detail="Review not found"
-    )
+    return review
 
 
 # DELETE review
 @app.delete("/api/reviews/{review_id}", status_code=204)
-def delete_review(review_id: int):
+def delete_review(
+    review_id: int,
+    db: Session = Depends(get_db)
+):
 
-    for review in reviews:
+    review = db.query(Review).filter(
+        Review.id == review_id
+    ).first()
 
-        if review["id"] == review_id:
-            reviews.remove(review)
-            return
+    if not review:
+        raise HTTPException(
+            status_code=404,
+            detail="Review not found"
+        )
 
-    raise HTTPException(
-        status_code=404,
-        detail="Review not found"
-    )
+    db.delete(review)
+    db.commit()
+
+    return
 
 
 # SEARCH reviews

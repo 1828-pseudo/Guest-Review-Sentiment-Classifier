@@ -30,7 +30,7 @@ function Navbar() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 
         <h2 className="font-extrabold text-2xl md:text-3xl text-center md:text-left">
-            Aivora AI
+          Aivora AI
         </h2>
 
         <div className="flex flex-wrap justify-center gap-4">
