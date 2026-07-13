@@ -1,46 +1,168 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 import toast from "react-hot-toast";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Loader from "../components/ui/Loader";
 import Toast from "../components/ui/Toast";
+import SearchDestination from "../components/SearchDestination";
+import HotelCard from "../components/HotelCard";
+import HotelDetails from "../components/HotelDetails";
+import ReviewCard from "../components/ReviewCard";
+import ReviewForm from "../components/ReviewForm";
+import StatsCards from "../components/StatsCards";
 
 function Dashboard() {
-  const [reviews, setReviews] = useState([]);
-const [loading, setLoading] = useState(true);
 
-const [name, setName] = useState("");
-const [reviewText, setReviewText] = useState("");
-const [sentiment, setSentiment] = useState("Positive");
-const [editingId, setEditingId] = useState(null);
-const [isEditing, setIsEditing] = useState(false);
+  // ===========================
+  // State Variables
+  // ===========================
+
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [name, setName] = useState("");
+  const [reviewText, setReviewText] = useState("");
+  const [sentiment, setSentiment] = useState("Positive");
+
+  const [editingId, setEditingId] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Destination & Hotel
+  const [destination, setDestination] = useState("Mussoorie");
+  const [selectedHotel, setSelectedHotel] = useState(null);
+  const [searched, setSearched] = useState(false);
 
   useEffect(() => {
     fetchReviews();
   }, []);
 
-  const fetchReviews = async () => {
-    try {
-      const response = await axios.get(
-        "http://127.0.0.1:5000/api/reviews"
-      );
+  // ===========================
+  // Hotels (Temporary Data)
+  // ===========================
 
-      setReviews(response.data);
-      toast.success("Reviews loaded successfully!");
-    } catch (error) {
-      toast.error("Failed to fetch reviews.");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const hotels = [
+  {
+    id: 1,
+    name: "Mountain View Resort",
+    location: "Mussoorie",
+    rating: 4.8,
+    price: 4500,
+    type: "Luxury Resort",
+    availability: "Available",
+    description: "Luxury mountain resort with breathtaking Himalayan views.",
+    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+  },
 
-  const addReview = async () => {
+  {
+    id: 2,
+    name: "Green Valley Homestay",
+    location: "Mussoorie",
+    rating: 4.5,
+    price: 2200,
+    type: "Homestay",
+    availability: "Available",
+    description: "Peaceful homestay surrounded by lush greenery.",
+    image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
+  },
+
+  {
+    id: 3,
+    name: "Snow Peak Inn",
+    location: "Mussoorie",
+    rating: 4.4,
+    price: 3000,
+    type: "Hotel",
+    availability: "Only 2 Rooms Left",
+    description: "Comfortable stay with scenic mountain landscapes.",
+    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800",
+  },
+
+  {
+    id: 4,
+    name: "Lake View Palace",
+    location: "Nainital",
+    rating: 4.7,
+    price: 5200,
+    type: "Resort",
+    availability: "Available",
+    description: "Beautiful resort overlooking Naini Lake.",
+    image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800",
+  },
+
+  {
+    id: 5,
+    name: "River Side Camp",
+    location: "Rishikesh",
+    rating: 4.6,
+    price: 1800,
+    type: "Camping",
+    availability: "Available",
+    description: "Adventure camping beside the Ganga River.",
+    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+  },
+
+  {
+    id: 6,
+    name: "Himalayan Heights",
+    location: "Auli",
+    rating: 4.9,
+    price: 6200,
+    type: "Luxury Hotel",
+    availability: "Available",
+    description: "Premium ski resort with Himalayan snow views.",
+    image: "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800",
+  },
+
+  {
+    id: 7,
+    name: "Forest Retreat",
+    location: "Dehradun",
+    rating: 4.3,
+    price: 2800,
+    type: "Eco Stay",
+    availability: "Available",
+    description: "Nature-inspired eco stay surrounded by forests.",
+    image: "https://images.unsplash.com/photo-1455587734955-081b22074882?w=800",
+  },
+];
+
+
+
+
+
+  
+// ===========================
+// Fetch Reviews
+// ===========================
+
+const fetchReviews = async () => {
+  try {
+    const response = await api.get(
+      "http://127.0.0.1:5000/api/reviews"
+    );
+
+    setReviews(response.data);
+
+  } catch (error) {
+    toast.error("Failed to fetch reviews.");
+    console.error(error);
+
+  } finally {
+    setLoading(false);
+  }
+};
+
+// ===========================
+// Add Review
+// ===========================
+
+const addReview = async () => {
+
   try {
 
-    await axios.post(
+    await api.post(
       "http://127.0.0.1:5000/api/reviews",
       {
         name,
@@ -63,7 +185,13 @@ const [isEditing, setIsEditing] = useState(false);
     console.error(err);
 
   }
+
 };
+
+// ===========================
+// Delete Review
+// ===========================
+
 const deleteReview = async (id) => {
 
   const confirmDelete = window.confirm(
@@ -90,9 +218,12 @@ const deleteReview = async (id) => {
   }
 
 };
-const editReview = (review) => {
 
-  console.log("Edit clicked", review);
+// ===========================
+// Edit Review
+// ===========================
+
+const editReview = (review) => {
 
   setEditingId(review.id);
   setIsEditing(true);
@@ -102,6 +233,11 @@ const editReview = (review) => {
   setSentiment(review.sentiment);
 
 };
+
+// ===========================
+// Update Review
+// ===========================
+
 const updateReview = async () => {
 
   try {
@@ -134,6 +270,29 @@ const updateReview = async () => {
   }
 
 };
+const handleSearch = (destinationName) => {
+
+  const formatted =
+    destinationName.trim().toLowerCase();
+
+  const match = hotels.find(
+    hotel => hotel.location.toLowerCase() === formatted
+  );
+
+  if (!match) {
+    toast.error("No hotels found for this destination.");
+    setSearched(false);
+    return;
+  }
+
+  setDestination(match.location);
+  setSelectedHotel(null);
+  setSearched(true);
+
+};
+
+
+
 
 
   const positive = reviews.filter(
@@ -170,11 +329,60 @@ const updateReview = async () => {
           </p>
 
         </div>
+        
+{/* Destination */}
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 mb-10">
+<SearchDestination
+  destination={destination}
+  setDestination={setDestination}
+  onSearch={handleSearch}
+/>
+{/* Hotels */}
+
+{searched && (
+
+  <div className="mb-10">
+
+    <h2 className="text-3xl font-bold mb-6">
+      Hotels in {destination}
+    </h2>
+
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      {hotels
+        .filter((hotel) => hotel.location === destination)
+        .map((hotel) => (
+
+          <HotelCard
+            key={hotel.id}
+            hotel={hotel}
+            onSelect={setSelectedHotel}
+          />
+
+      ))}
+
+    </div>
+
+  </div>
+
+)}
+
+{/* Selected Hotel */}
+
+{selectedHotel && (
+
+  <HotelDetails hotel={selectedHotel} />
+
+)}
+
+{/* Add Review */}
+
+{selectedHotel && (
+
+<div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 mb-10">
 
   <h2 className="text-2xl font-bold mb-5">
-    Add Review
+    {isEditing ? "Edit Review" : "Add Review"}
   </h2>
 
   <input
@@ -202,44 +410,44 @@ const updateReview = async () => {
     <option>Negative</option>
   </select>
 
- <div className="flex gap-3">
-
-  <button
-    onClick={isEditing ? updateReview : addReview}
-    className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700"
-  >
-    {isEditing ? "Update Review" : "Add Review"}
-  </button>
-
-  {isEditing && (
+  <div className="flex gap-3">
 
     <button
-      onClick={() => {
-
-        setIsEditing(false);
-        setEditingId(null);
-
-        setName("");
-        setReviewText("");
-        setSentiment("Positive");
-
-      }}
-      className="bg-gray-500 text-white px-6 py-3 rounded hover:bg-gray-600"
+      onClick={isEditing ? updateReview : addReview}
+      className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700"
     >
-      Cancel
+      {isEditing ? "Update Review" : "Add Review"}
     </button>
 
-  )}
+    {isEditing && (
+
+      <button
+        onClick={() => {
+          setIsEditing(false);
+          setEditingId(null);
+          setName("");
+          setReviewText("");
+          setSentiment("Positive");
+        }}
+        className="bg-gray-500 text-white px-6 py-3 rounded hover:bg-gray-600"
+      >
+        Cancel
+      </button>
+
+    )}
+
+  </div>
 
 </div>
 
-</div>
+)}
 
 
         {/* Summary Cards */}
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+{selectedHotel && (
 
+<div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 text-center">
             <h3 className="text-gray-500">Total Reviews</h3>
             <p className="text-3xl font-bold mt-2">
@@ -269,6 +477,7 @@ const updateReview = async () => {
           </div>
 
         </div>
+        )}
 
        {/* Reviews */}
 
