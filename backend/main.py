@@ -1,9 +1,18 @@
+from google import genai
+from dotenv import load_dotenv
+import os
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from fastapi import Request
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
+from slowapi import _rate_limit_exceeded_handler
 from database import SessionLocal
 from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel , EmailStr, Field
 
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
@@ -15,6 +24,13 @@ from database import Base
 
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
+
+load_dotenv()
+
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
+
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -33,6 +49,15 @@ oauth2_scheme = OAuth2PasswordBearer(
 app = FastAPI(
     title="Aivora AI API"
 )
+limiter = Limiter(key_func=get_remote_address)
+
+app.state.limiter = limiter
+app.add_exception_handler(
+    RateLimitExceeded,
+    _rate_limit_exceeded_handler
+)
+
+app.add_middleware(SlowAPIMiddleware)
 Base.metadata.create_all(bind=engine)
 
 def get_db():
@@ -65,11 +90,15 @@ def verify_token(token: str = Depends(oauth2_scheme)):
 
     try:
 
+        print("Received Token:", token)
+
         payload = jwt.decode(
             token,
             SECRET_KEY,
             algorithms=[ALGORITHM]
         )
+
+        print("Decoded Payload:", payload)
 
         email = payload.get("sub")
 
@@ -81,7 +110,9 @@ def verify_token(token: str = Depends(oauth2_scheme)):
 
         return email
 
-    except JWTError:
+    except JWTError as e:
+
+        print("JWT Error:", e)
 
         raise HTTPException(
             status_code=401,
@@ -97,6 +128,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class AIReview(BaseModel):
+    review: str
+
+
+@app.post("/api/ai/analyze")
+def ai_review(data: AIReview):
+
+    sentiment = analyze_review(data.review)
+
+    return {
+        "sentiment": sentiment
+    }
+
 # Review Model
 class ReviewCreate(BaseModel):
     name: str
@@ -104,30 +148,18 @@ class ReviewCreate(BaseModel):
     sentiment: str
 
 class RegisterUser(BaseModel):
-    username: str
-    email: str
-    password: str
-
+    username: str = Field(min_length=3, max_length=30)
+    email: EmailStr
+    password: str = Field(min_length=8)
 
 class LoginUser(BaseModel):
-    email: str
-    password: str
-
+    email: EmailStr
+    password: str = Field(min_length=8)
 # In-memory data
-reviews = [
-    {
-        "id": 1,
-        "name": "John",
-        "review": "Amazing stay and friendly staff.",
-        "sentiment": "Positive",
-    },
-    {
-        "id": 2,
-        "name": "Sarah",
-        "review": "Room was average.",
-        "sentiment": "Neutral",
-    },
-]
+class AIRequest(BaseModel):
+    review: str
+
+
 
 
 # Root Route
@@ -149,15 +181,23 @@ def get_reviews(current_user: str = Depends(verify_token),db: Session = Depends(
 
 # GET single review
 @app.get("/api/reviews/{review_id}", status_code=200)
-def get_review(review_id: int):
-    for review in reviews:
-        if review["id"] == review_id:
-            return review
+def get_review(
+    review_id: int,
+    current_user: str = Depends(verify_token),
+    db: Session = Depends(get_db)
+):
 
-    raise HTTPException(
-        status_code=404,
-        detail="Review not found"
-    )
+    review = db.query(Review).filter(
+        Review.id == review_id
+    ).first()
+
+    if not review:
+        raise HTTPException(
+            status_code=404,
+            detail="Review not found"
+        )
+
+    return review
 
 
 # POST create review
@@ -240,22 +280,28 @@ def delete_review(
 
 # SEARCH reviews
 @app.get("/api/reviews/search/{keyword}", status_code=200)
-def search_reviews(keyword: str):
+def search_reviews(
+    keyword: str,
+    current_user: str = Depends(verify_token),
+    db: Session = Depends(get_db)
+):
 
-    result = []
+    results = db.query(Review).filter(
+        or_(
+            Review.name.ilike(f"%{keyword}%"),
+            Review.review.ilike(f"%{keyword}%")
+        )
+    ).all()
 
-    for review in reviews:
-
-        if (
-            keyword.lower() in review["review"].lower()
-            or keyword.lower() in review["name"].lower()
-        ):
-            result.append(review)
-
-    return result
+    return results
 
 @app.post("/api/auth/register")
-def register_user(user: RegisterUser, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def register_user(
+    request: Request,
+    user: RegisterUser,
+    db: Session = Depends(get_db)
+):
 
     existing_email = db.query(User).filter(
         User.email == user.email
@@ -297,7 +343,9 @@ def get_users(db: Session = Depends(get_db)):
     return db.query(User).all()
     
 @app.post("/api/auth/login")
+
 def login_user(
+    request: Request,
     user: LoginUser,
     db: Session = Depends(get_db)
 ):
@@ -342,3 +390,37 @@ def login_user(
         "access_token": token,
         "token_type": "bearer"
     }
+@app.post("/api/ai/sentiment")
+def analyze_sentiment(data: AIRequest):
+
+    try:
+
+        prompt = f"""
+Analyze the sentiment of the following hotel review.
+
+Review:
+{data.review}
+
+Reply with ONLY one word:
+Positive
+Negative
+Neutral
+"""
+
+        response = client.models.generate_content(
+    model="gemini-2.0-flash",
+    contents=prompt,
+)
+
+        return {
+            "sentiment": response.text.strip()
+        }
+
+    except Exception as e:
+
+        print("Gemini Error:", e)
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import toast from "react-hot-toast";
-
+import { analyzeReview } from "../services/aiService";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Loader from "../components/ui/Loader";
@@ -13,8 +14,10 @@ import ReviewCard from "../components/ReviewCard";
 import ReviewForm from "../components/ReviewForm";
 import StatsCards from "../components/StatsCards";
 
+
 function Dashboard() {
 
+  const navigate = useNavigate();
   // ===========================
   // State Variables
   // ===========================
@@ -25,6 +28,7 @@ function Dashboard() {
   const [name, setName] = useState("");
   const [reviewText, setReviewText] = useState("");
   const [sentiment, setSentiment] = useState("Positive");
+  const [aiLoading, setAiLoading] = useState(false);
 
   const [editingId, setEditingId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -130,7 +134,13 @@ function Dashboard() {
 
 
 
+useEffect(() => {
+  const token = localStorage.getItem("token");
 
+  if (!token) {
+    navigate("/login");
+  }
+}, [navigate]);
 
   
 // ===========================
@@ -139,18 +149,20 @@ function Dashboard() {
 
 const fetchReviews = async () => {
   try {
-    const response = await api.get(
-      "http://127.0.0.1:5000/api/reviews"
-    );
+
+    const response = await api.get("/api/reviews");
 
     setReviews(response.data);
 
   } catch (error) {
+
     toast.error("Failed to fetch reviews.");
     console.error(error);
 
   } finally {
+
     setLoading(false);
+
   }
 };
 
@@ -158,12 +170,43 @@ const fetchReviews = async () => {
 // Add Review
 // ===========================
 
+const handleAIAnalyze = async () => {
+
+  if (!reviewText.trim()) {
+    toast.error("Please enter a review first.");
+    return;
+  }
+
+  try {
+
+    setAiLoading(true);
+
+    const result = await analyzeReview(reviewText);
+
+    setSentiment(result.sentiment);
+
+    toast.success("AI sentiment generated!");
+
+  } catch (err) {
+
+    toast.error("AI analysis failed.");
+
+    console.error(err);
+
+  } finally {
+
+    setAiLoading(false);
+
+  }
+
+};
+
 const addReview = async () => {
 
   try {
 
     await api.post(
-      "http://127.0.0.1:5000/api/reviews",
+  "/api/reviews",
       {
         name,
         review: reviewText,
@@ -202,10 +245,9 @@ const deleteReview = async (id) => {
 
   try {
 
-    await axios.delete(
-      `http://127.0.0.1:5000/api/reviews/${id}`
-    );
-
+    await api.delete(
+  `/api/reviews/${id}`
+);
     toast.success("Review deleted successfully!");
 
     fetchReviews();
@@ -242,14 +284,14 @@ const updateReview = async () => {
 
   try {
 
-    await axios.put(
-      `http://127.0.0.1:5000/api/reviews/${editingId}`,
-      {
-        name,
-        review: reviewText,
-        sentiment,
-      }
-    );
+    await api.put(
+  `/api/reviews/${editingId}`,
+  {
+    name,
+    review: reviewText,
+    sentiment,
+  }
+);
 
     toast.success("Review Updated!");
 
@@ -410,34 +452,39 @@ const handleSearch = (destinationName) => {
     <option>Negative</option>
   </select>
 
-  <div className="flex gap-3">
+  <div className="flex gap-3 flex-wrap">
 
+  <button
+    onClick={handleAIAnalyze}
+    disabled={aiLoading}
+    className="bg-purple-600 text-white px-6 py-3 rounded hover:bg-purple-700 disabled:opacity-50"
+  >
+    {aiLoading ? "Analyzing..." : "Analyze with AI"}
+  </button>
+
+  <button
+    onClick={isEditing ? updateReview : addReview}
+    className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700"
+  >
+    {isEditing ? "Update Review" : "Add Review"}
+  </button>
+
+  {isEditing && (
     <button
-      onClick={isEditing ? updateReview : addReview}
-      className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700"
+      onClick={() => {
+        setIsEditing(false);
+        setEditingId(null);
+        setName("");
+        setReviewText("");
+        setSentiment("Positive");
+      }}
+      className="bg-gray-500 text-white px-6 py-3 rounded hover:bg-gray-600"
     >
-      {isEditing ? "Update Review" : "Add Review"}
+      Cancel
     </button>
+  )}
 
-    {isEditing && (
-
-      <button
-        onClick={() => {
-          setIsEditing(false);
-          setEditingId(null);
-          setName("");
-          setReviewText("");
-          setSentiment("Positive");
-        }}
-        className="bg-gray-500 text-white px-6 py-3 rounded hover:bg-gray-600"
-      >
-        Cancel
-      </button>
-
-    )}
-
-  </div>
-
+</div>
 </div>
 
 )}

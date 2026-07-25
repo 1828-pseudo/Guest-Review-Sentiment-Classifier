@@ -1,3 +1,4 @@
+import { GoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
@@ -77,6 +78,26 @@ return (
         >
           Login
         </button>
+        
+      <div className="mt-6 flex justify-center">
+  <GoogleLogin
+    onSuccess={(credentialResponse) => {
+      console.log(credentialResponse);
+
+      localStorage.setItem(
+        "google_token",
+        credentialResponse.credential
+      );
+
+      alert("Google Login Successful!");
+
+      navigate("/dashboard");
+    }}
+    onError={() => {
+      alert("Google Login Failed");
+    }}
+  />
+</div>
 
       </form>
 
@@ -89,3 +110,4 @@ return (
 }
 
 export default Login;
+
