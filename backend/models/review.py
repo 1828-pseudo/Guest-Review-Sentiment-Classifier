@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from database import Base
 
 
@@ -14,3 +14,10 @@ class Review(Base):
     sentiment = Column(String, nullable=False)
 
     edited = Column(Boolean, default=False, nullable=False)
+
+    # Connect review to an accommodation
+    accommodation_id = Column(
+        Integer,
+        ForeignKey("accommodations.id"),
+        nullable=False
+    )

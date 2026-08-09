@@ -1,255 +1,126 @@
-# Guest Review Sentiment Classifier
+# AIVORA AI – AI-Powered Guest Review & Booking System
 
-A full-stack machine learning–powered web application that analyzes guest reviews and classifies sentiment as **Positive**, **Negative**, or **Neutral**. The project helps hospitality businesses gain actionable insights from customer feedback through an intuitive web interface and a RESTful backend API.
-
----
-
-## 🚀 Current Progress
-
-### Frontend
-
-* Built using **React + Vite**
-* Styled with **Tailwind CSS**
-* Client-side routing using **React Router DOM**
-* Responsive layouts for mobile, tablet, and desktop
-* Dark/Light mode with theme persistence using **localStorage**
-* Reusable UI component library
-
-### Backend
-
-* Built with **FastAPI**
-* RESTful API with CRUD operations
-* Search endpoint for reviews
-* CORS configured for frontend integration
-* In-memory data storage (database integration planned)
-* Interactive API documentation via Swagger UI
+AIVORA AI is an AI-powered guest review and accommodation discovery platform designed to help users find suitable homestays and accommodations across Uttarakhand, explore accommodation details, read guest reviews, and analyze reviews using AI-powered sentiment analysis.
 
 ---
 
-## ✨ Features
+## 🚀 Live Demo
 
-### Frontend
+🔗 **Live App:** `https://yourapp.vercel.app`
 
-* Responsive user interface
-* Route-based navigation
-* Dark/Light theme switching
-* Reusable component architecture
-* UI Component Showcase page
-
-### Backend
-
-* REST API for guest reviews
-* Create, Read, Update and Delete (CRUD) operations
-* Search reviews by keyword
-* JSON responses with proper HTTP status codes
-* Error handling using FastAPI exceptions
+> The live Vercel URL will be added after final deployment.
 
 ---
 
-## 📄 Pages
+## 📸 Screenshots
 
-* Home
-* About
-* Dashboard
-* Login
-* UI Component Showcase
+### Home / Landing Page
 
----
+![Home Page](image.png)
 
-## 🧩 UI Component Library
+### Accommodation Search
 
-* Button
-* Input
-* Modal
-* Toast
-* Loader
+![Accommodation Search](database.png)
 
----
+### Dashboard
 
-## 🛠 Tech Stack
+![Dashboard](screenshots/dashboard.png)
 
-### Frontend
+### Hotel Details & Reviews
 
-* React
-* Vite
-* Tailwind CSS
-* React Router DOM
-* React Hot Toast
+![Hotel Details](screenshots/hotel-details.png)
 
-### Backend
-
-* FastAPI
-* Python
-* Uvicorn
-* Python Dotenv
-
-### Planned ML Integration
-
-* Scikit-learn
-* Pandas
-* NumPy
+> Add the final 3–4 screenshots to the repository and update the image paths above if their filenames are different.
 
 ---
 
-## 📂 Project Structure
+# ✨ Features
 
-```text
-Guest-Review-Sentiment-Classifier/
-│
-├── frontend/
-│   ├── src/
-│   │   ├── assets/
-│   │   ├── components/
-│   │   │   ├── ui/
-│   │   ├── pages/
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── package.json
-│   └── vite.config.js
-│
-├── backend/
-│   ├── main.py
-│   ├── requirements.txt
-│   ├── .env.example
-│   └── .gitignore
-│
-└── README.md
-```
-
----
-
-## 🔗 REST API Endpoints
-
-| Method | Endpoint                        | Description      |
-| ------ | ------------------------------- | ---------------- |
-| GET    | `/`                             | API status       |
-| GET    | `/api/reviews`                  | Get all reviews  |
-| GET    | `/api/reviews/{id}`             | Get review by ID |
-| POST   | `/api/reviews`                  | Create review    |
-| PUT    | `/api/reviews/{id}`             | Update review    |
-| DELETE | `/api/reviews/{id}`             | Delete review    |
-| GET    | `/api/reviews/search/{keyword}` | Search reviews   |
+- 🔐 User registration and login
+- 🔑 JWT-based authentication
+- 📱 Login using email or phone number
+- 🏨 Browse accommodations across Uttarakhand
+- 🔎 Search accommodations by destination
+- 🏡 View accommodation details
+- ⭐ View accommodation ratings and availability
+- 💰 Display price per night
+- 📝 Add guest reviews
+- ✏️ Edit existing reviews
+- 🗑️ Delete reviews
+- 🔗 Associate reviews with specific accommodations
+- 👤 Automatically associate reviews with the logged-in user
+- 🤖 AI-powered guest review sentiment analysis
+- 😊 Positive, Neutral and Negative sentiment classification
+- 📊 Review sentiment statistics
+- 🔒 Protected review APIs using JWT authentication
+- 📱 Responsive user interface
+- 🌙 Dark-mode compatible UI
+- 🔔 Toast notifications for user actions
+- ⚡ Fast React + Vite frontend
+- 🗄️ PostgreSQL database integration
+- 🌐 REST API-based frontend/backend communication
 
 ---
 
-## ⚙️ How to Run Frontend Locally
+# 🛠️ Tech Stack
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+## Frontend
 
-Frontend runs at:
+- React.js
+- Vite
+- JavaScript
+- Tailwind CSS
+- React Router
+- Axios
+- React Hot Toast
 
-```
-http://localhost:5173
-```
+## Backend
 
----
-
-## ⚙️ How to Run Backend Locally
-
-### Navigate to backend
-
-```bash
-cd backend
-```
-
-### Create virtual environment
-
-```bash
-python -m venv venv
-```
-
-### Activate virtual environment
-
-Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-### Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Create `.env`
-
-```env
-PORT=5000
-```
-
-### Run the backend
-
-```bash
-uvicorn main:app --reload --port 5000
-```
-
-Backend:
-
-```
-http://127.0.0.1:5000
-```
-
-Swagger Documentation:
-
-```
-http://127.0.0.1:5000/docs
-```
+- Python
+- FastAPI
+- SQLAlchemy
+- Pydantic
+- JWT Authentication
+- Passlib / bcrypt
 
 ## Database
 
-This project uses PostgreSQL hosted on Supabase.
+- PostgreSQL
+- Supabase PostgreSQL
 
-### Why PostgreSQL?
+## AI
 
-- Structured relational database
-- Reliable and scalable
-- Supports SQLAlchemy ORM
-- Easy cloud hosting using Supabase
+- Google Gemini API
+- Gemini-powered sentiment analysis
 
----
+The AI analyzes guest review text and classifies it as:
 
-## Database Schema
+- Positive
+- Neutral
+- Negative
 
-![schema image](image.png)
-![DATABASE SCHEMA](database.png)
+## Deployment
 
----
+- Frontend: Vercel
+- Backend: Render
+- Database: Supabase
 
-## Setup Database
+## Development Tools
 
-1. Create a Supabase project.
-2. Copy the Session Pooler connection string.
-3. Add DATABASE_URL inside the .env file.
-4. Install dependencies
-
-pip install -r requirements.txt
-
-5. Run
-
-uvicorn main:app --reload
+- Visual Studio Code
+- Git
+- GitHub
+- Postman
 
 ---
 
-## 🚧 Upcoming Development
+# ⚙️ Setup Instructions
 
-* Machine Learning sentiment prediction
-* Frontend-backend API integration
-* Guest review submission workflow
-* Dashboard analytics and visualizations
-* Database integration
-* User authentication
-* Deployment to cloud platforms
+Follow the steps below to run AIVORA AI locally.
 
 ---
 
-## 📌 Project Status
+## 1. Clone the Repository
 
-🚧 **Project Under Active Development**
-
-This project is currently being developed as part of a software development internship. The frontend foundation and RESTful backend API have been completed, while machine learning integration, database connectivity, and advanced analytics are actively being implemented.
+```bash
+git clone https://github.com/1828-pseudo/Guest-Review-Sentiment-Classifier.git

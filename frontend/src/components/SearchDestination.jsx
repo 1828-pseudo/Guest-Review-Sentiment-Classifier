@@ -16,7 +16,7 @@ function SearchDestination({ onSearch }) {
 
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-10">
 
-      <h2 className="text-3xl font-bold mb-6">
+      <h2 className="text-2xl font-bold mb-4">
         📍 Choose Your Destination
       </h2>
 

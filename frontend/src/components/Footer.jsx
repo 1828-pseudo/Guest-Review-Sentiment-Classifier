@@ -1,7 +1,9 @@
 function Footer() {
   return (
-    <footer className="bg-gray-800 dark:bg-black text-white text-center p-4 mt-10 transition-colors duration-300">
-      <p>© 2026 Aivora AI | All Rights Reserved</p>
+    <footer className="bg-[#111827] text-white text-center py-5">
+      <p className="text-lg">
+        © 2026 Aivora AI | All Rights Reserved
+      </p>
     </footer>
   );
 }

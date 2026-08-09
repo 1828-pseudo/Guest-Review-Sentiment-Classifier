@@ -10,6 +10,7 @@ load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
 
 # Read database URL
 DATABASE_URL = os.getenv("DATABASE_URL")
+print("DATABASE URL LOADED:", bool(DATABASE_URL))
 
 # Create database engine
 engine = create_engine(DATABASE_URL)

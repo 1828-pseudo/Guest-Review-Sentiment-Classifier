@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 from database import engine, SessionLocal
 from models.review import Review
 from models.user import User
+from models.accommodation import Accommodation
 from database import Base
 
 from jose import JWTError, jwt
@@ -122,7 +123,10 @@ def verify_token(token: str = Depends(oauth2_scheme)):
 # CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -146,15 +150,21 @@ class ReviewCreate(BaseModel):
     name: str
     review: str
     sentiment: str
+    accommodation_id: int
 
 class RegisterUser(BaseModel):
     username: str = Field(min_length=3, max_length=30)
+    full_name: str
+    phone: str
     email: EmailStr
     password: str = Field(min_length=8)
 
+from typing import Optional
+
 class LoginUser(BaseModel):
-    email: EmailStr
-    password: str = Field(min_length=8)
+    email: str | None = None
+    phone: str | None = None
+    password: str
 # In-memory data
 class AIRequest(BaseModel):
     review: str
@@ -211,10 +221,11 @@ def create_review(
 ):
 
     new_review = Review(
-        name=review.name,
-        review=review.review,
-        sentiment=review.sentiment
-    )
+    name=review.name,
+    review=review.review,
+    sentiment=review.sentiment,
+    accommodation_id=review.accommodation_id
+)
 
     db.add(new_review)
     db.commit()
@@ -294,7 +305,6 @@ def search_reviews(
     ).all()
 
     return results
-
 @app.post("/api/auth/register")
 @limiter.limit("5/minute")
 def register_user(
@@ -323,10 +333,22 @@ def register_user(
             detail="Username already taken."
         )
 
+    existing_phone = db.query(User).filter(
+        User.phone == user.phone
+    ).first()
+
+    if existing_phone:
+        raise HTTPException(
+            status_code=400,
+            detail="Phone number already registered."
+        )
+
     hashed_password = pwd_context.hash(user.password)
 
     new_user = User(
         username=user.username,
+        full_name=user.full_name,
+        phone=user.phone,
         email=user.email,
         password=hashed_password,
     )
@@ -343,29 +365,64 @@ def get_users(db: Session = Depends(get_db)):
     return db.query(User).all()
     
 @app.post("/api/auth/login")
-
 def login_user(
     request: Request,
     user: LoginUser,
     db: Session = Depends(get_db)
 ):
 
-    print("Email entered:", user.email)
+    print("LOGIN REQUEST")
+    print("Email:", user.email)
+    print("Phone:", user.phone)
 
-    db_user = db.query(User).filter(
-        User.email == user.email
-    ).first()
+    # -----------------------------
+    # EMAIL LOGIN
+    # -----------------------------
+    if user.email:
+
+        db_user = db.query(User).filter(
+            User.email == user.email
+        ).first()
+
+    # -----------------------------
+    # PHONE LOGIN
+    # -----------------------------
+    elif user.phone:
+
+        phone = user.phone.strip()
+
+        # If user enters 6230514726,
+        # convert it to +916230514726
+        if phone.startswith("0"):
+            phone = "+91" + phone[1:]
+
+        elif phone.startswith("91") and not phone.startswith("+91"):
+            phone = "+" + phone
+
+        elif not phone.startswith("+"):
+            phone = "+91" + phone
+
+        print("Normalized Phone:", phone)
+
+        db_user = db.query(User).filter(
+            User.phone == phone
+        ).first()
+
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Email or phone number is required."
+        )
 
     print("User found:", db_user)
 
     if not db_user:
         raise HTTPException(
             status_code=401,
-            detail="Invalid email or password."
+            detail="Invalid email/phone or password."
         )
 
     print("Stored Hash:", db_user.password)
-    print("Entered Password:", user.password)
 
     password_ok = pwd_context.verify(
         user.password,
@@ -377,7 +434,7 @@ def login_user(
     if not password_ok:
         raise HTTPException(
             status_code=401,
-            detail="Invalid email or password."
+            detail="Invalid email/phone or password."
         )
 
     token = create_access_token(
@@ -388,7 +445,8 @@ def login_user(
 
     return {
         "access_token": token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "username": db_user.full_name
     }
 @app.post("/api/ai/sentiment")
 def analyze_sentiment(data: AIRequest):
@@ -408,7 +466,7 @@ Neutral
 """
 
         response = client.models.generate_content(
-    model="gemini-2.0-flash",
+    model="gemini-3.5-flash",
     contents=prompt,
 )
 
@@ -424,3 +482,36 @@ Neutral
             status_code=500,
             detail=str(e)
         )
+
+    
+# ==========================
+# ACCOMMODATIONS
+# ==========================
+
+@app.get("/api/accommodations")
+def get_accommodations(
+    city: str = None,
+    type: str = None,
+    db: Session = Depends(get_db)
+):
+    query = db.query(Accommodation)
+
+    if city:
+        query = query.filter(
+            Accommodation.city.ilike(city)
+        )
+
+    if type:
+        query = query.filter(
+            Accommodation.type.ilike(type)
+        )
+
+    return query.all()
+@app.get("/api/accommodations/test")
+def test_accommodations(db: Session = Depends(get_db)):
+    count = db.query(Accommodation).count()
+
+    return {
+        "database_connection": "working",
+        "accommodation_count": count
+    }

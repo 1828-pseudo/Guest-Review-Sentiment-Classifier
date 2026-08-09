@@ -1,17 +1,54 @@
+import homeBg from "../assets/lulu.png";
+
 function Hero() {
   return (
-    <section className="bg-gray-100 dark:bg-gray-800 py-20 text-center transition-colors duration-300">
-      <h1 className="text-5xl font-bold mb-4 text-black dark:text-white">
-        Guest Review Sentiment Classifier
-      </h1>
+    <section className="relative h-[calc(100vh-130px)] overflow-hidden">
 
-      <p className="text-gray-600 dark:text-gray-300 mb-6">
-        Analyze guest reviews and understand customer sentiment.
-      </p>
+      {/* Background */}
+      <img
+        src={homeBg}
+        alt="Background"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
 
-      <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
-        Get Started
-      </button>
+      {/* Transparent Overlay */}
+      <div className="absolute inset-0 bg-black opacity-20"></div>
+
+      {/* Hero Content */}
+      <div className="relative flex flex-col items-center justify-center h-full px-8 text-center">
+
+        <h1
+          className="
+          text-yellow-400
+          font-black
+          leading-none
+          text-3xl
+          md:text-3xl
+          lg:text-[5rem]
+          drop-shadow-[0_8px_20px_rgba(0,0,0,0.8)]
+          "
+        >
+          Helping you find the best
+          <br />
+          homestays across Uttarakhand
+        </h1>
+
+        <p
+          className="
+          mt-6
+          max-w-4xl
+          text-white
+          text-xl
+          md:text-3xl
+          leading-relaxed
+          "
+        >
+          Discover trusted homestays, authentic local experiences,
+          and AI-powered guest reviews to help you choose the perfect stay.
+        </p>
+
+      </div>
+
     </section>
   );
 }

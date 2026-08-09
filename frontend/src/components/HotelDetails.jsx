@@ -1,119 +1,114 @@
 function HotelDetails({ hotel }) {
-
   if (!hotel) return null;
 
   return (
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 mt-10">
 
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden mb-10">
+      <div className="grid md:grid-cols-2 gap-8">
 
-      {/* Hotel Image */}
-
-      <img
-        src={hotel.image}
-        alt={hotel.name}
-        className="w-full h-[420px] object-cover"
-      />
-
-      <div className="p-8">
-
-        {/* Hotel Name */}
-
-        <div className="flex justify-between items-center">
-
-          <div>
-
-            <h2 className="text-4xl font-bold">
-              {hotel.name}
-            </h2>
-
-            <p className="text-blue-600 mt-2 font-medium">
-              {hotel.type}
-            </p>
-
-          </div>
-
-          <div className="text-right">
-
-            <p className="text-yellow-500 text-2xl">
-              ⭐ {hotel.rating}
-            </p>
-
-            <p className="text-green-600 font-semibold mt-2">
-              ● {hotel.availability}
-            </p>
-
-          </div>
-
+        {/* Image */}
+        <div>
+          <img
+            src={
+              hotel.image_url ||
+              "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1000"
+            }
+            alt={hotel.name}
+            className="w-full h-80 object-cover rounded-xl"
+          />
         </div>
 
-        {/* Location */}
+        {/* Details */}
+        <div>
 
-        <p className="mt-5 text-gray-600 dark:text-gray-300">
-          📍 {hotel.location}
-        </p>
+          <p className="text-yellow-600 font-semibold mb-2">
+            {hotel.type}
+          </p>
 
-        {/* Description */}
+          <h2 className="text-3xl font-bold mb-3">
+            {hotel.name}
+          </h2>
 
-        <p className="mt-6 text-lg text-gray-700 dark:text-gray-300 leading-8">
-          {hotel.description}
-        </p>
+          {/* Location */}
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
+            📍 {hotel.address || `${hotel.city}, ${hotel.district}, ${hotel.state}`}
+          </p>
 
-        {/* Amenities */}
+          {/* Rating */}
+          <div className="flex items-center mb-4">
 
-        <h3 className="text-2xl font-bold mt-10 mb-5">
-          Amenities
-        </h3>
+            <span className="text-yellow-500 text-xl">
+              ⭐⭐⭐⭐⭐
+            </span>
 
-        <div className="grid md:grid-cols-3 gap-4">
+            <span className="ml-2 font-bold">
+              {hotel.rating ?? "New"}
+            </span>
 
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
-            📶 Free WiFi
-          </div>
-
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
-            🍽 Restaurant
-          </div>
-
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
-            🚗 Free Parking
-          </div>
-
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
-            🛏 Deluxe Rooms
-          </div>
-
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
-            🏊 Swimming Pool
-          </div>
-
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
-            🌄 Mountain View
-          </div>
-
-        </div>
-
-        {/* Price */}
-
-        <div className="flex justify-between items-center mt-10 border-t pt-8">
-
-          <div>
-
-            <p className="text-gray-500">
-              Starting From
-            </p>
-
-            <h2 className="text-4xl font-bold text-green-600">
-              ₹{hotel.price}
-            </h2>
-
-            <p className="text-gray-500">
-              per night
-            </p>
+            {hotel.review_count > 0 && (
+              <span className="ml-2 text-gray-500">
+                ({hotel.review_count} reviews)
+              </span>
+            )}
 
           </div>
 
+          {/* Price */}
+          <p className="text-3xl font-bold text-green-600 mb-4">
+            ₹{hotel.price_per_night}
+            <span className="text-base text-gray-500 font-normal">
+              {" "}
+              / night
+            </span>
+          </p>
+
+          {/* Availability */}
+          <p
+            className={`font-semibold mb-5 ${
+              hotel.availability === "Available"
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
+          >
+            ● {hotel.availability}
+          </p>
+
+          {/* Description */}
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-5">
+            {hotel.description ||
+              "A comfortable accommodation for your stay."}
+          </p>
+
+          {/* Amenities */}
+          {hotel.amenities && (
+            <div className="mb-6">
+
+              <h3 className="font-bold text-lg mb-2">
+                Amenities
+              </h3>
+
+              <div className="flex flex-wrap gap-2">
+
+                {hotel.amenities
+                  .split(",")
+                  .map((amenity, index) => (
+                    <span
+                      key={index}
+                      className="bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg text-sm"
+                    >
+                      {amenity.trim()}
+                    </span>
+                  ))}
+
+              </div>
+
+            </div>
+          )}
+
+          {/* Book */}
           <button
-            className="bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-xl text-lg"
+            onClick={() => alert("Booking feature coming soon!")}
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold"
           >
             Book Now
           </button>
@@ -123,9 +118,7 @@ function HotelDetails({ hotel }) {
       </div>
 
     </div>
-
   );
-
 }
 
 export default HotelDetails;

@@ -1,20 +1,9 @@
-import axios from "axios";
-
-const API = "http://127.0.0.1:8000/api/ai";
+import api from "./api";
 
 export const analyzeReview = async (review) => {
+  const response = await api.post("/api/ai/sentiment", {
+    review: review,
+  });
 
-    const token = localStorage.getItem("token");
-
-    const response = await axios.post(
-        `${API}/sentiment`,
-        { review },
-        {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
-
-    return response.data;
+  return response.data;
 };
