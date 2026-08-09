@@ -5,7 +5,7 @@ import About from "./pages/About";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import ComponentDemo from "./pages/ComponentDemo";
-import Signup from "./pages/Signup";
+import Signup from "./pages/signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPhone from "./pages/LoginPhone";
 import LoginOTP from "./pages/LoginOTP";
